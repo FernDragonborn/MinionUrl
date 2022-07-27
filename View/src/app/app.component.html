@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<head></head>
+
+<body>
+  <h1>MinionURL</h1>
+  <div class="container">
+
+    <form #form="ngForm" (ngSubmit)="onSubmit()">
+      <label for="">Input URL</label>
+      <input type="text" name="inputUrl" [(ngModel)]="url.fullUrl">
+      <button >shorten!</button>
+    </form>
+
+    <table class="content-table">
+      <thead>
+        <tr>
+          <th style="flex:2">Short Url</th>
+          <th style="flex:3">Full Url</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="urlTable Row" *ngFor="let url of urls">
+          <td style="flex:2">{{url.shortUrl}}</td>
+          <td style="flex:3">{{url.fullUrl}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</body>

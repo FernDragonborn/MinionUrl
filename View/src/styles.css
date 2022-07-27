@@ -1,0 +1,57 @@
+* {
+    font-family: sans-serif;
+}
+
+.content-table {
+    display: flex;
+    flex-direction: column;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    min-width: 400px;
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+}
+
+.content-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-around;
+}
+
+.content-table th, .content-table td
+{
+    padding: 0.7em 1em;
+}
+
+.urlTable.Row:last-of-type {
+    border-bottom: 0.1em solid #009879;
+}
+
+.content-table tbody tr {
+    border-bottom: 0.1em solid #dddddd;
+    display: flex;
+    justify-content: space-between;
+}
+.content-table tbody tr td{
+    overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-line-clamp: 4;
+	-webkit-box-orient: vertical;
+}
+
+.content-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.content-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.content-table tbody tr td:hover {
+    color: #009879;
+}

@@ -9,7 +9,6 @@ namespace MinionUrl
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -22,6 +21,15 @@ namespace MinionUrl
                 options.UseSqlServer(builder.Configuration.GetConnectionString("MinionUrlConnectionString")
             ));
 
+            builder.Services.AddCors((setup) =>
+            {
+                setup.AddPolicy("nonRestricted", (options) =>
+                {
+                    //TODO change restrictions for API
+                    options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -31,10 +39,15 @@ namespace MinionUrl
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("nonRestricted");
+
             app.UseHttpsRedirection();
+
+
 
             app.Use((req, next) =>
             {
+
                 return next();
             });
 

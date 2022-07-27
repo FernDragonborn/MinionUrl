@@ -18,6 +18,13 @@ namespace MinionUrl.Models
             Id = Guid.NewGuid();
             CreationDateTime = DateTime.Now;
         }
+        public UrlData(string Url)
+        {
+            Id = Guid.NewGuid();
+            FullUrl = Url;
+            ShortUrl = Url;
+            CreationDateTime = DateTime.Now;
+        }
         public UrlData(string Url, int CreatroId)
         {
             Id = Guid.NewGuid();
@@ -30,8 +37,10 @@ namespace MinionUrl.Models
     }
     public class UrlBuffer
     {
-        public Guid Id { get; set; }
-        public string Url { get; set; }
-        public int CreatorId { get; set; }
+        public Guid? Id { get; set; }
+        public string? FullUrl { get; set; }
+        public string? ShortUrl { get; set; }
+        public int? CreatorId { get; set; }
+        public string? CreationDateTime { get; set; }
     }
 }

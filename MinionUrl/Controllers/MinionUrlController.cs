@@ -16,65 +16,96 @@ namespace MinionUrl.Controllers
             this.minionUrlDbContext = minionUrlDbContext;
         }
 
-        [HttpGet("GetAllUrls")]
-        public async Task<IActionResult> GetAllUrls()
+
+        //public virtual UrlData UrlConvert(UrlBuffer urlBuff)
+        //{
+        //    var urlData = new UrlData
+        //    {
+
+        //    };
+        //    return urlData;
+        //}
+        //public virtual UrlBuffer UrlConvert(UrlData urlData)
+        //{
+        //    var urlBuff = new UrlBuffer
+        //    {
+        //        Id = urlData.Id,
+        //        FullUrl = urlData.FullUrl,
+        //        ShortUrl = urlData.ShortUrl,
+        //        CreatorId = urlData.CreatorId,
+        //        CreationDateTime = Convert.ToString(urlData.CreationDateTime)
+        //    };
+        //    return urlBuff;
+        //}
+
+        //GetAllUrls
+        [HttpGet]
+        public async Task<IActionResult> getAllUrls()
         {
             var context = await minionUrlDbContext.UrlData.ToListAsync();
+
             return Ok(context);
         }
 
-        [HttpGet("GetUrl")]
-        public async Task<IActionResult> GetSingleUrl([FromRoute] Guid id)
+        //GetSingleUrl
+        [HttpGet]
+        public async Task<IActionResult> getSingleUrl([FromRoute] Guid id)
         {
             var context = await minionUrlDbContext.UrlData.FirstOrDefaultAsync(x => x.Id == id);
-            if (context is not null)
+            if (context is null)
             {
-                return Ok(context);
+                return NotFound("URL not found");
             }
-            return NotFound("URL not found");
+            return Ok(context);
         }
 
+        //AddUrl
         [HttpPost]
-        public async Task<IActionResult> AddUrl([FromBody] UrlBuffer UrlBuff)
+        public async Task<IActionResult> addUrl([FromBody] UrlBuffer UrlBuff)
         {
             if (UrlBuff is null)
             {
-                throw new ArgumentNullException(nameof(UrlBuff));
+                return BadRequest("Null input");
             }
 
-            var UrlFinal = new UrlData(UrlBuff.Url, UrlBuff.CreatorId);
+            var UrlFinal = new UrlData(UrlBuff.FullUrl);
+            UrlFinal.CreatorId = Convert.ToInt32(UrlBuff.CreatorId);
 
             await minionUrlDbContext.UrlData.AddAsync(UrlFinal);
             await minionUrlDbContext.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetSingleUrl), new { id = UrlFinal.Id }, UrlFinal);
+            return CreatedAtAction(nameof(getSingleUrl), new { id = UrlFinal.Id }, UrlFinal);
         }
 
         //TODO add shortingUrl method
+        //UpdateUrl
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<IActionResult> UpdateUrl([FromRoute] Guid id, [FromBody] UrlBuffer UrlBuff)
+        public async Task<IActionResult> updateUrl([FromRoute] Guid id, [FromBody] UrlBuffer UrlBuff)
         {
             var UrlFinal = await minionUrlDbContext.UrlData.FirstOrDefaultAsync(x => x.Id == id);
             if (UrlFinal is null)
             {
                 return BadRequest("Null input");
             }
-            UrlFinal.FullUrl = UrlBuff.Url;
+
+            UrlFinal.FullUrl = UrlBuff.FullUrl;
             UrlFinal.CreationDateTime = DateTime.Now;
             await minionUrlDbContext.SaveChangesAsync();
             return Ok(UrlFinal);
         }
 
+        //DeleteUrl
         [HttpDelete]
         [Route("{id:guid}")]
-        public async Task<IActionResult> DeleteUrl([FromRoute] Guid id)
+        public async Task<IActionResult> deleteUrl([FromRoute] Guid id)
         {
             var url = await minionUrlDbContext.UrlData.FirstOrDefaultAsync(x => x.Id == id);
             if (url is null)
             {
                 return BadRequest("Null input");
             }
+
             minionUrlDbContext.Remove(url);
             await minionUrlDbContext.SaveChangesAsync();
             return Ok(url);
