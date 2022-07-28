@@ -48,15 +48,15 @@ namespace MinionUrl.Controllers
         }
 
         //GetSingleUrl
-        [HttpGet]
-        public async Task<IActionResult> getSingleUrl([FromRoute] Guid id)
+        [HttpGet("{id:guid}")]
+        public async virtual Task<IActionResult> getSingleUrl([FromRoute] Guid id)
         {
-            var context = await minionUrlDbContext.UrlData.FirstOrDefaultAsync(x => x.Id == id);
-            if (context is null)
+            var url = await minionUrlDbContext.UrlData.FirstOrDefaultAsync(x => x.Id == id);
+            if (url is null)
             {
                 return NotFound("URL not found");
             }
-            return Ok(context);
+            return Ok(url);
         }
 
         //AddUrl
@@ -68,8 +68,7 @@ namespace MinionUrl.Controllers
                 return BadRequest("Null input");
             }
 
-            var UrlFinal = new UrlData(UrlBuff.FullUrl);
-            UrlFinal.CreatorId = Convert.ToInt32(UrlBuff.CreatorId);
+            var UrlFinal = new UrlData(UrlBuff.FullUrl, Convert.ToInt32(UrlBuff.CreatorId));
 
             await minionUrlDbContext.UrlData.AddAsync(UrlFinal);
             await minionUrlDbContext.SaveChangesAsync();

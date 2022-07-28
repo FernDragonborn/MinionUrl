@@ -22,15 +22,15 @@ namespace MinionUrl.Models
         {
             Id = Guid.NewGuid();
             FullUrl = Url;
-            ShortUrl = Url;
+            ShortUrl = Shortener.makeShortUrl();
             CreationDateTime = DateTime.Now;
         }
-        public UrlData(string Url, int CreatroId)
+        public UrlData(string Url, int CreatorId)
         {
             Id = Guid.NewGuid();
             FullUrl = Url;
-            ShortUrl = Url;
-            this.CreatorId = CreatroId;
+            ShortUrl = Shortener.makeShortUrl();
+            this.CreatorId = CreatorId;
             CreationDateTime = DateTime.Now;
         }
 

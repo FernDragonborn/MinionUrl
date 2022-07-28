@@ -1,6 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MinionUrl.Data;
+using Microsoft.Extensions.DependencyInjection;
+using MinionUrl.Controllers;
+using Microsoft.Data.SqlClient;
+using System.Text;
 
 namespace MinionUrl
 {
@@ -8,7 +11,13 @@ namespace MinionUrl
     {
         public static void Main(string[] args)
         {
+            string connectionString = "Server=(localdb)\\mssqllocaldb; Database=MinionUrlDb;" +
+                    "Trusted_Connection=True; MultipleActiveResultSets=true; Integrated Security=True;";
+            var sqlConnection = new SqlConnection(connectionString);
+
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<MinionUrlContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("MinionUrlContext") ?? throw new InvalidOperationException("Connection string 'MinionUrlContext' not found.")));
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -47,7 +56,27 @@ namespace MinionUrl
 
             app.Use((req, next) =>
             {
-
+                string a = req.ToString();
+                if (a[1] != 'm')
+                    return next();
+                var enterUrl = new StringBuilder();
+                enterUrl.Append(req.Request.Path.ToString());
+                enterUrl.Remove(0, 1);
+                string getUrlFromDb = $"SELECT FullUrl FROM UrlData WHERE ShortUrl='{enterUrl}'";
+                var cmGetUrlFromDb = new SqlCommand(getUrlFromDb, sqlConnection);
+                sqlConnection.Open();
+                try
+                {
+                    var reader = cmGetUrlFromDb.ExecuteReader();
+                    string exitUrl = reader.ToString();
+                    req.Response.Redirect($"{exitUrl}");
+                }
+                catch
+                {
+                    sqlConnection.Close();
+                    throw new Exception("Can't redirect. Possible invalid link");
+                }
+                sqlConnection.Close();
                 return next();
             });
 
