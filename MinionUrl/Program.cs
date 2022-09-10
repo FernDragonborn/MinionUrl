@@ -20,6 +20,8 @@ namespace MinionUrl
                 options.UseSqlServer(builder.Configuration.GetConnectionString("MinionUrlContext") ?? throw new InvalidOperationException("Connection string 'MinionUrlContext' not found.")));
             // Add services to the container.
 
+            builder.Services.
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -52,13 +54,12 @@ namespace MinionUrl
 
             app.UseHttpsRedirection();
 
-
-
             app.Use((req, next) =>
             {
                 string a = req.ToString();
                 if (a[1] != 'm')
                     return next();
+
                 var enterUrl = new StringBuilder();
                 enterUrl.Append(req.Request.Path.ToString());
                 enterUrl.Remove(0, 1);

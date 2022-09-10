@@ -68,7 +68,7 @@ namespace MinionUrl.Controllers
                 return BadRequest("Null input");
             }
 
-            var UrlFinal = new UrlData(UrlBuff.FullUrl, Convert.ToInt32(UrlBuff.CreatorId));
+            var UrlFinal = new UrlData(UrlBuff.FullUrl!, Convert.ToInt32(UrlBuff.CreatorId));
 
             await minionUrlDbContext.UrlData.AddAsync(UrlFinal);
             await minionUrlDbContext.SaveChangesAsync();
@@ -85,10 +85,10 @@ namespace MinionUrl.Controllers
             var UrlFinal = await minionUrlDbContext.UrlData.FirstOrDefaultAsync(x => x.Id == id);
             if (UrlFinal is null)
             {
-                return BadRequest("Null input");
+                BadRequest("Null input");
             }
 
-            UrlFinal.FullUrl = UrlBuff.FullUrl;
+            UrlFinal!.FullUrl = UrlBuff.FullUrl!;
             UrlFinal.CreationDateTime = DateTime.Now;
             await minionUrlDbContext.SaveChangesAsync();
             return Ok(UrlFinal);
@@ -96,6 +96,7 @@ namespace MinionUrl.Controllers
 
         //DeleteUrl
         [HttpDelete]
+
         [Route("{id:guid}")]
         public async Task<IActionResult> deleteUrl([FromRoute] Guid id)
         {
